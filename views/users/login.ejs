@@ -1,5 +1,5 @@
-<%- layout("/layouts/boilerplate")%>
-<div class="row mt-3">
+<!-- <%- layout("/layouts/boilerplate")%> -->
+<!-- <div class="row mt-3">
   <h1 class="col-6 offset-3">Login</h1>
     <div class="col-6 offset-3">
     <form action="/login" method="POST" class="needs-validation" novalidate>
@@ -23,4 +23,330 @@
        <button class="btn btn-success">Login</button>
     </form>
   </div>
- </div>
+ </div> -->
+
+
+
+  <%- layout("/layouts/boilerplate") %>
+
+<style>
+  /* ========================================
+     STAYNEST LOGIN PAGE
+  ======================================== */
+
+  .staynest-login {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 0 auto;
+    width: 100%;
+    min-width: 0;
+    padding: 2.5rem 1rem;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 15% 15%, rgba(124, 58, 237, 0.25), transparent 45%),
+      radial-gradient(ellipse at 85% 85%, rgba(79, 70, 229, 0.22), transparent 45%),
+      linear-gradient(135deg, #0f1020 0%, #19152f 50%, #101827 100%);
+    color: #f8fafc;
+  }
+
+  .staynest-login::before,
+  .staynest-login::after {
+    position: absolute;
+    z-index: -1;
+    width: 250px;
+    height: 250px;
+    content: "";
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.22;
+    pointer-events: none;
+  }
+
+  .staynest-login::before {
+    top: -100px;
+    left: -80px;
+    background: #8b5cf6;
+  }
+
+  .staynest-login::after {
+    right: -90px;
+    bottom: -100px;
+    background: #6366f1;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 460px;
+    padding: clamp(1.5rem, 5vw, 2.5rem);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    background: rgba(24, 25, 45, 0.88);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .login-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-bottom: 1.75rem;
+    color: #fff;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .login-brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.25);
+  }
+
+  .login-brand-icon i {
+    color: #fff;
+    font-size: 1.2rem;
+  }
+
+  .login-title {
+    margin-bottom: 0.65rem;
+    color: #fff;
+    font-size: clamp(1.8rem, 5vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    text-align: center;
+  }
+
+  .login-subtitle {
+    margin-bottom: 2rem;
+    color: #a7abc2;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    text-align: center;
+  }
+
+  .login-form .mb-3 {
+    margin-bottom: 1.25rem !important;
+  }
+
+  .login-form .form-label {
+    display: block;
+    margin-bottom: 0.55rem;
+    color: #e5e7eb;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .login-form .form-control {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.85rem 1rem;
+    border: 1px solid #3a3b56;
+    border-radius: 12px;
+    outline: none;
+    background: #15162a;
+    color: #fff;
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .login-form .form-control::placeholder {
+    color: #777b98;
+  }
+
+  .login-form .form-control:focus {
+    border-color: #8b5cf6;
+    background: #191a32;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+  }
+
+  .login-form .form-control.is-invalid {
+    border-color: #fb7185;
+  }
+
+  .login-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 0.5rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease,
+      filter 0.2s ease;
+  }
+
+  .login-submit:focus-visible {
+    outline: 3px solid #c4b5fd;
+    outline-offset: 3px;
+  }
+
+  .login-divider {
+    height: 1px;
+    margin: 1.75rem 0 1.25rem;
+    border: 0;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .login-footer-text {
+    margin: 0;
+    color: #a7abc2;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .login-footer-text a {
+    color: #c4b5fd;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .login-footer-text a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .login-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.38);
+    }
+
+    .login-submit:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+      box-shadow: 0 14px 30px rgba(99, 102, 241, 0.32);
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .staynest-login {
+      padding: 1.5rem 0.75rem;
+    }
+
+    .login-card {
+      padding: 1.5rem 1.15rem;
+      border-radius: 20px;
+    }
+
+    .login-subtitle {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .login-card,
+    .login-submit,
+    .login-form .form-control {
+      transition: none;
+    }
+  }
+</style>
+
+<section class="staynest-login">
+  <div class="login-card">
+
+    <div class="login-brand">
+      <span class="login-brand-icon">
+        <i class="fa-solid fa-house" aria-hidden="true"></i>
+      </span>
+      <span>Stay<span class="text-info">Nest</span></span>
+    </div>
+
+    <h1 class="login-title">Welcome Back!</h1>
+
+    <p class="login-subtitle">
+      Sign in to your account and find your perfect place to stay.
+    </p>
+
+    <form
+      action="/login"
+      method="POST"
+      class="login-form needs-validation"
+      novalidate
+    >
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input
+          name="username"
+          type="text"
+          id="username"
+          class="form-control"
+          placeholder="Enter your username"
+          autocomplete="username"
+          required
+        />
+        <div class="invalid-feedback">
+          Please enter your username.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          name="password"
+          type="password"
+          id="password"
+          class="form-control"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          required
+        />
+        <div class="invalid-feedback">
+          Please enter your password.
+        </div>
+      </div>
+
+      <button type="submit" class="login-submit">
+        <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+        Login to StayNest
+      </button>
+    </form>
+
+    <hr class="login-divider" />
+
+    <p class="login-footer-text">
+      Don't have an account?
+      <a href="/signup">Create an account</a>
+    </p>
+
+  </div>
+</section>
+
+<script>
+  (() => {
+    const forms = document.querySelectorAll(".login-form");
+
+    forms.forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        form.classList.add("was-validated");
+      });
+    });
+  })();
+</script>

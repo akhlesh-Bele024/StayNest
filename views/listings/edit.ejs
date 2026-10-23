@@ -1,63 +1,221 @@
-<%- layout("/layouts/boilerplate")%>
-<div class="row mt-3">
-  <div class="col-8 offset-2">
-    <h3>Edit your Listing</h3>
-    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate
-      class="needs-validation"
-      enctype="multipart/form-data">
-      <div  class="mb-3">
-        <label for="title" class="form-lable" >Title</label>
-      <input name="listing[title]" value="<%= listing.title %>" type="text" class="form-control" required />
-      <div class="invalid-feedback">Title should be valid</div>
+
+<%- layout("/layouts/boilerplate") %>
+
+<div class="edit-page">
+  <div class="edit-container">
+
+    <div class="edit-header">
+      <div class="edit-icon">
+        <i class="fa-solid fa-house-circle-check"></i>
+      </div>
+      <h1>Edit Your Listing</h1>
+      <p>Make your property stand out with updated details.</p>
     </div>
-      <div  class="mb-3">
-        <label for="description" class="form-lable">Description</label>
-      <textarea name="listing[description]" class="form-control" required>
-<%= listing.description %></textarea>
-      <div class="invalid-feedback">description should be valid</div>
-    </div>
-    <div class="mb-3">
-      original listing image <br>
-      <img src="<%=originalImageUrl%>">
-    </div>
-      <div  class="mb-3">
-        <label for="image]" class="form-lable"> Upload New image </label>
-      <input name="listing[image]"  type="file" class="form-control"  />
-      
-    </div>
-    <div class="row">
-      <div  class="mb-3 col-md-4">
-        <label for="price" class="price">price</label>
-      <input name="listing[price]" value="<%= listing.price %>" type="number" class="form-control" required/>
-      <div class="invalid-feedback">price should be valid</div>
-    </div>
-  
-      <div  class="mb-3 col-md-8">
-        <label for="country" class="country">country</label>
-      <input
-        name="listing[country]"
-        value="<%= listing.country %>"
-        type="text"
-        class="form-control" 
-        required
-      />
-      <div class="invalid-feedback">country should be valid</div>
-    </div>
-  </div>
-      <div  class="mb-3">
-        <label for="location" class="location">Location</label>
-      <input
-        name="listing[location]"
-        value="<%= listing.location %>"
-        type="text"
-        class="form-control"
-        required
-      />
-      <div class="invalid-feedback">location should be valid</div>
-    </div>
-      <button class="btn btn-dark edit-btn mt-3">Edit</button>
-      <br></br>
+
+    <form
+      method="POST"
+      action="/listings/<%= listing._id %>?_method=PUT"
+      novalidate
+      class="needs-validation edit-form"
+      enctype="multipart/form-data"
+    >
+
+      <!-- Title -->
+      <div class="edit-field">
+        <label for="title">
+          <i class="fa-solid fa-heading"></i> Listing Title
+        </label>
+        <input
+          id="title"
+          name="listing[title]"
+          value="<%= listing.title %>"
+          type="text"
+          class="form-control"
+          placeholder="Enter your property title"
+          required
+        />
+        <div class="invalid-feedback">
+          Please enter a valid listing title.
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="edit-field">
+        <label for="description">
+          <i class="fa-solid fa-align-left"></i> Description
+        </label>
+        <textarea
+          id="description"
+          name="listing[description]"
+          class="form-control"
+          rows="5"
+          placeholder="Describe your beautiful property..."
+          required
+        ><%= listing.description %></textarea>
+        <div class="invalid-feedback">
+          Please enter a description.
+        </div>
+      </div>
+
+      <!-- Current Image -->
+      <div class="edit-field">
+        <label>
+          <i class="fa-solid fa-image"></i> Current Property Image
+        </label>
+
+        <div class="current-image-box">
+          <img
+            src="<%= originalImageUrl %>"
+            alt="Current listing image"
+            class="current-listing-image"
+          />
+          <div class="image-caption">
+            <i class="fa-solid fa-circle-check"></i>
+            Currently uploaded image
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Image -->
+      <div class="edit-field">
+        <label for="image">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Upload New Image
+        </label>
+        <input
+          id="image"
+          name="listing[image]"
+          type="file"
+          class="form-control image-input"
+          accept="image/*"
+        />
+        <small class="field-hint">
+          <i class="fa-solid fa-circle-info"></i>
+          Leave empty if you want to keep the current image.
+        </small>
+        <div id="imagePreview" class="image-preview" hidden>
+          <img id="previewImg" src="" alt="New image preview" />
+          <span id="previewName"></span>
+        </div>
+      </div>
+
+      <!-- Price and Country -->
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label for="price">
+            <i class="fa-solid fa-indian-rupee-sign"></i> Price
+          </label>
+          <input
+            id="price"
+            name="listing[price]"
+            value="<%= listing.price %>"
+            type="number"
+            min="0"
+            class="form-control"
+            placeholder="Price per night"
+            required
+          />
+          <div class="invalid-feedback">
+            Please enter a valid price.
+          </div>
+        </div>
+
+        <div class="edit-field">
+          <label for="country">
+            <i class="fa-solid fa-earth-asia"></i> Country
+          </label>
+          <input
+            id="country"
+            name="listing[country]"
+            value="<%= listing.country %>"
+            type="text"
+            class="form-control"
+            placeholder="Enter country"
+            required
+          />
+          <div class="invalid-feedback">
+            Please enter a country.
+          </div>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="edit-field">
+        <label for="location">
+          <i class="fa-solid fa-location-dot"></i> Location
+        </label>
+        <input
+          id="location"
+          name="listing[location]"
+          value="<%= listing.location %>"
+          type="text"
+          class="form-control"
+          placeholder="City, area or address"
+          required
+        />
+        <div class="invalid-feedback">
+          Please enter a valid location.
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="edit-actions">
+        <a href="/listings/<%= listing._id %>" class="cancel-btn">
+          <i class="fa-solid fa-arrow-left"></i> Cancel
+        </a>
+
+        <button type="submit" class="save-btn">
+          <i class="fa-solid fa-floppy-disk"></i>
+          Save Changes
+        </button>
+      </div>
+
     </form>
   </div>
 </div>
 
+<script>
+  // Preview newly selected image
+  const imageInput = document.getElementById("image");
+  const imagePreview = document.getElementById("imagePreview");
+  const previewImg = document.getElementById("previewImg");
+  const previewName = document.getElementById("previewName");
+
+  let previewUrl;
+
+  imageInput.addEventListener("change", function () {
+    const file = this.files[0];
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+    }
+
+    if (file && file.type.startsWith("image/")) {
+      previewUrl = URL.createObjectURL(file);
+      previewImg.src = previewUrl;
+      previewName.textContent = file.name;
+      imagePreview.hidden = false;
+    } else {
+      imagePreview.hidden = true;
+      previewImg.removeAttribute("src");
+      previewName.textContent = "";
+    }
+  });
+
+
+
+  (() => {
+  "use strict";
+
+  document.querySelectorAll(".needs-validation").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      form.classList.add("was-validated");
+    });
+  });
+})();
+</script>

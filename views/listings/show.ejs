@@ -1,110 +1,676 @@
+
 <%- layout("/layouts/boilerplate") %>
 
-  <div class="row mt-3">
-    <div class="col-8 offset-2">
-<!-- <for(let listing of listings){ -->
-    <h3><%= listing.title %>:</h3>
-    </div>
-     <div class="card col-6 offset-3 show-card listing-card">
-      <img src="<%=listing.image.url%>" class="card-img-top show-image" alt="listing_image">
-      <div class="card-body">
-        
-        <p class="card-text">owned by <i><%= listing.owner.username%></i></p>
-        <p class="card-text"> <%= listing.description %> </p>
-        <p class="card-text"> &#8377; <%= listing.price.toLocaleString("en-IN") %></p>
-        <p class="card-text"><%= listing.location %></p>
-          <p class="card-text"><%= listing.country %></p> 
-      </div>
-    </div>
-    </div>
-   
-    
-    <br />
-    <%# if(currUser && listing.owner._id.equals(currUser._id)) { %>
+<%
+  const price = Math.max(0, Number(listing.price) || 0);
+  const gst = price * 0.18;
+  const totalPrice = price + gst;
 
-      <% if (currUser && listing.owner._id.equals(currUser._id)) { %>
+  const reviews = Array.isArray(listing.reviews) ? listing.reviews : [];
+  const reviewCount = reviews.length;
 
-    
-    <div class="btns">
-    <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
-    <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
-      <button class="btn btn-dark  offset-3">Delete</button>
-    </form>
-     </div>
-  
-     <%}%>
-  
-  
-    
-   <div class="col-8 offset-3 mb-3">
-   
-    <% if(currUser) {%>
-      <hr/>
-    <h4>Leave a Review</h4>
-    <form action="/listings/<%=listing._id%>/reviews"  method="POST" novalidate class="needs-validation">
+  const getId = (value) => {
+    if (!value) return "";
+    return String(value._id || value);
+  };
 
-      <div class="mb-3 mt-3">
-        <label for="rating" class="form-lable">Rating</label>
-      <fieldset class="starability-slot">
-        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-        <label for="first-rate1" title="Terrible">1 star</label>
-        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-        <label for="first-rate2" title="Not good">2 stars</label>
-        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-        <label for="first-rate3" title="Average">3 stars</label>
-        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-        <label for="first-rate4" title="Very good">4 stars</label>
-        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-        <label for="first-rate5" title="Amazing">5 stars</label>
-      </fieldset>
-      </div>
-      <div class="mb-3 mt-3">
-        <label for="comment"class="form-lable">Comment</label>
-        <textarea name="review[comment]" id="comment" cols="30" rows="5"class="form-control" required></textarea>
-        <div class="invalid-feedback">Please submit some comments for reviews</div>
-      </div>
-      <button class="btn btn-outline-dark">Submit</button>
-    </form>
-   <%}%>
-    <hr/>
-    <% if(listing.reviews.length>0){%>
+  const currentUserId = getId(currUser);
+  const ownerId = getId(listing.owner);
 
-      <div class="row">
-        <p><b>
-          All Reviews</b></p> 
-   
-        <% for(let review of listing.reviews) { %>
+  const isOwner = Boolean(
+    currentUserId && ownerId && currentUserId === ownerId
+  );
 
-      
-        <div class="card col-5 ms-3 mb-3">
-         <div class="card-body">
-        <h5 class="card-title">@<%=review.author.username%></h5>
-        <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
-        <p class="card-text"><%= review.comment %></p> 
-        
-       </div>
-         <form class="mb-3 " method="POST" action="/listings/<%=listing._id %>/reviews/<%= review.id%>?_method=DELETE">
-         <button class="btn btn-sm btn-dark">Delete</button>
-        </form>
-       </div>
-     </div>
-    <%}%> 
-  
-        </div>
-      <%}%>
-     </div>
-      <div class="col-6 offset-3 mb-3">
-      <h3>where you'll be</h3>
-      <div id="map">
-      
-    </div>
+  const locationText = [listing.location, listing.country]
+    .filter(Boolean)
+    .join(", ");
+
+  const mapQuery = locationText || listing.title || "";
+  const mapUrl = mapQuery
+    ? "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent(mapQuery)
+    : null;
+%>
+
+<main class="staynest-show">
+
+  <!-- Top bar -->
+  <div class="show-topbar">
+    <a href="/listings" class="show-back-link">
+      <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      <span>Explore stays</span>
+    </a>
+
+    <% if (isOwner) { %>
+      <span class="owner-badge">
+        <i class="fa-solid fa-house-user" aria-hidden="true"></i>
+        Your property
+      </span>
+    <% } %>
   </div>
-  
-</div>
 
+  <!-- Listing heading -->
+  <section class="show-heading">
+    <div class="show-heading-content">
+      <span class="show-eyebrow">
+        <i class="fa-solid fa-compass" aria-hidden="true"></i>
+        DISCOVER YOUR NEXT STAY
+      </span>
 
+      <h1><%= listing.title || "Untitled stay" %></h1>
 
+      <div class="show-meta">
+        <span>
+          <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+          <%= locationText || "Location not specified" %>
+        </span>
 
+        <span class="show-meta-divider" aria-hidden="true">•</span>
 
+        <span>
+          <i class="fa-solid fa-star" aria-hidden="true"></i>
+          <%= reviewCount > 0
+            ? reviewCount + " review" + (reviewCount === 1 ? "" : "s")
+            : "New listing" %>
+        </span>
+      </div>
+    </div>
 
+    <% if (mapUrl) { %>
+      <a
+        href="<%= mapUrl %>"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="show-map-btn"
+        aria-label="View this property's location on Google Maps"
+      >
+        <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+        <span>View map</span>
+      </a>
+    <% } %>
+  </section>
+
+  <!-- Main image -->
+  <section class="show-gallery">
+    <div class="show-image-wrapper">
+      <img
+        src="<%= listing.image?.url || '/images/placeholder.png' %>"
+        class="show-image"
+        alt="<%= listing.title || 'StayNest property' %> in <%= locationText || 'unknown location' %>"
+        fetchpriority="high"
+        decoding="async"
+        onerror="this.onerror=null;this.src='https://placehold.co/1200x750/f1f5f9/64748b?text=StayNest+Stay';"
+      >
+
+      <span class="gallery-badge">
+        <i class="fa-solid fa-camera" aria-hidden="true"></i>
+        Your next getaway
+      </span>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <div class="show-content-grid">
+
+    <!-- Left column -->
+    <div class="show-main-column">
+
+      <!-- Host and description -->
+      <section class="show-info-section">
+        <div class="show-host-row">
+          <div class="show-host-avatar" aria-hidden="true">
+            <i class="fa-solid fa-user"></i>
+          </div>
+
+          <div>
+            <h2>
+              Hosted by <%= listing.owner?.username || "StayNest host" %>
+            </h2>
+            <p>Your stay, your comfort</p>
+          </div>
+        </div>
+
+        <div class="show-section-divider"></div>
+
+        <h2 class="show-section-title">
+          <i class="fa-solid fa-house" aria-hidden="true"></i>
+          About this stay
+        </h2>
+
+        <p class="show-description"><%= listing.description || "No description is available for this stay yet." %></p>
+      </section>
+
+      <!-- Location -->
+      <section class="show-location-panel">
+        <div class="show-location-icon" aria-hidden="true">
+          <i class="fa-solid fa-location-dot"></i>
+        </div>
+
+        <div class="show-location-details">
+          <h3>Where you'll be</h3>
+          <p><%= locationText || "Location not specified" %></p>
+
+          <% if (mapUrl) { %>
+            <a
+              href="<%= mapUrl %>"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Open in Google Maps
+              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+            </a>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- Owner actions -->
+      <% if (isOwner) { %>
+        <section class="show-owner-panel">
+          <div>
+            <span class="show-owner-label">PROPERTY MANAGEMENT</span>
+            <h3>Manage your listing</h3>
+            <p>Keep your property details up to date.</p>
+          </div>
+
+          <div class="show-owner-actions">
+            <a
+              href="/listings/<%= listing._id %>/edit"
+              class="show-edit-btn"
+            >
+              <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+              Edit listing
+            </a>
+
+            <form
+              method="POST"
+              action="/listings/<%= listing._id %>?_method=DELETE"
+              onsubmit="return confirm('Are you sure you want to delete this listing?');"
+            >
+              <button type="submit" class="show-delete-btn">
+                <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                Delete
+              </button>
+            </form>
+          </div>
+        </section>
+      <% } %>
+
+    </div>
+
+    <!-- Price card -->
+    <aside class="show-price-column">
+      <div class="show-price-card">
+
+        <div class="show-price-top">
+          <div>
+            <span class="show-price-label">PRICE PER NIGHT</span>
+
+            <div class="show-price">
+              <strong>₹<%= price.toLocaleString("en-IN") %></strong>
+              <span>/ night</span>
+            </div>
+          </div>
+
+          <div class="show-price-icon" aria-hidden="true">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+        </div>
+
+        <div class="show-price-divider"></div>
+
+        <!-- Price breakdown toggle -->
+        <div class="show-tax-toggle">
+          <div class="show-tax-label">
+            <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+
+            <div>
+              <strong>Price breakdown</strong>
+              <span>Understand your total</span>
+            </div>
+          </div>
+
+          <label class="show-switch">
+            <input
+              type="checkbox"
+              id="showTaxSwitch"
+              aria-controls="showTaxInfo"
+              aria-expanded="false"
+            >
+            <span class="show-switch-slider" aria-hidden="true"></span>
+            <span class="visually-hidden">Display price breakdown</span>
+          </label>
+        </div>
+
+        <!-- Tax details -->
+        <div class="show-tax-info" id="showTaxInfo" hidden>
+          <div class="show-tax-row">
+            <span>Price per night</span>
+            <span>₹<%= price.toLocaleString("en-IN") %></span>
+          </div>
+
+          <div class="show-tax-row">
+            <span>GST (18%)</span>
+            <span>₹<%= gst.toLocaleString("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }) %></span>
+          </div>
+
+          <div class="show-tax-row show-tax-total">
+            <strong>Total per night</strong>
+            <strong>₹<%= totalPrice.toLocaleString("en-IN", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }) %></strong>
+          </div>
+
+          <p class="show-tax-note">
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+            Illustrative calculation at 18% GST. Actual applicable tax may vary.
+          </p>
+        </div>
+
+        <!-- Booking feature notice -->
+        <% if (!isOwner) { %>
+          <button
+            type="button"
+            class="show-book-btn"
+            id="showBookBtn"
+            aria-label="Check booking availability for <%= listing.title || 'this property' %>"
+            aria-controls="showBookAlert"
+            aria-expanded="false"
+          >
+            <span>
+              <i class="fa-solid fa-calendar-check" aria-hidden="true"></i>
+              Book Now
+            </span>
+
+            <i class="fa-solid fa-arrow-right book-arrow" aria-hidden="true"></i>
+          </button>
+
+          <p class="show-book-note">
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            Booking is temporarily unavailable.
+          </p>
+
+          <div
+            class="show-book-alert"
+            id="showBookAlert"
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+
+            <div class="show-book-alert-content">
+              <strong>Booking Not Available</strong>
+              <p>
+                We're sorry! The booking feature is currently
+                unavailable. Please check back later.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              id="closeBookAlert"
+              class="show-book-alert-close"
+              aria-label="Close booking message"
+            >
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+          </div>
+
+        <% } else { %>
+          <p class="show-book-note">
+            <i class="fa-solid fa-house-user" aria-hidden="true"></i>
+            You are the owner of this property.
+          </p>
+        <% } %>
+
+        <!-- Price card footer -->
+        <div class="show-price-footer">
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+          <span>
+            Review the displayed price and tax information before planning your stay.
+          </span>
+        </div>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Reviews section -->
+  <section class="show-reviews-section" id="reviews">
+
+    <div class="show-reviews-heading">
+      <div>
+        <span class="show-eyebrow">GUEST EXPERIENCES</span>
+
+        <h2>
+          <i class="fa-solid fa-star" aria-hidden="true"></i>
+          Reviews
+          <span class="show-review-count">(<%= reviewCount %>)</span>
+        </h2>
+
+        <p>See what guests have to say about this stay.</p>
+      </div>
+    </div>
+
+    <!-- Review form -->
+    <% if (currUser) { %>
+      <div class="show-review-form-card">
+
+        <div class="show-form-heading">
+          <div class="show-form-icon" aria-hidden="true">
+            <i class="fa-solid fa-pen"></i>
+          </div>
+
+          <div>
+            <h3>Share your experience</h3>
+            <p>Help other travellers discover a great stay.</p>
+          </div>
+        </div>
+
+        <form
+          action="/listings/<%= listing._id %>/reviews"
+          method="POST"
+          class="needs-validation show-review-form"
+        >
+          <div class="show-form-group">
+            <label class="form-label">Your rating</label>
+
+            <fieldset class="starability-slot">
+              <legend class="visually-hidden">Choose your rating</legend>
+
+              <input
+                type="radio"
+                id="no-rate"
+                class="input-no-rate"
+                name="review[rating]"
+                value=""
+                aria-label="No rating"
+              >
+
+              <input
+                type="radio"
+                id="first-rate1"
+                name="review[rating]"
+                value="1"
+                required
+              >
+              <label for="first-rate1" title="Terrible">1 star</label>
+
+              <input
+                type="radio"
+                id="first-rate2"
+                name="review[rating]"
+                value="2"
+              >
+              <label for="first-rate2" title="Not good">2 stars</label>
+
+              <input
+                type="radio"
+                id="first-rate3"
+                name="review[rating]"
+                value="3"
+              >
+              <label for="first-rate3" title="Average">3 stars</label>
+
+              <input
+                type="radio"
+                id="first-rate4"
+                name="review[rating]"
+                value="4"
+              >
+              <label for="first-rate4" title="Very good">4 stars</label>
+
+              <input
+                type="radio"
+                id="first-rate5"
+                name="review[rating]"
+                value="5"
+              >
+              <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
+
+            <div class="invalid-feedback">
+              Please select a rating.
+            </div>
+          </div>
+
+          <div class="show-form-group">
+            <label for="comment" class="form-label">Your comment</label>
+
+            <textarea
+              name="review[comment]"
+              id="comment"
+              rows="4"
+              class="form-control"
+              placeholder="Tell us what you liked about this stay..."
+              minlength="3"
+              required
+            ></textarea>
+
+            <div class="invalid-feedback">
+              Please write a comment with at least 3 characters.
+            </div>
+          </div>
+
+          <button type="submit" class="show-submit-review">
+            Submit review
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </button>
+        </form>
+      </div>
+
+    <% } else { %>
+      <div class="show-login-prompt">
+        <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+
+        <div>
+          <h3>Have a stay to share?</h3>
+          <p>Log in to leave a review for this listing.</p>
+        </div>
+
+        <a href="/login">
+          Log in
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    <% } %>
+
+    <!-- Review cards -->
+    <% if (reviewCount > 0) { %>
+      <div class="show-review-grid">
+
+        <% for (const review of reviews) {
+          const reviewAuthorId = getId(review.author);
+          const isReviewAuthor = Boolean(
+            currentUserId &&
+            reviewAuthorId &&
+            currentUserId === reviewAuthorId
+          );
+        %>
+          <article class="show-review-card">
+
+            <div class="show-review-card-top">
+              <div class="show-review-avatar" aria-hidden="true">
+                <i class="fa-solid fa-user"></i>
+              </div>
+
+              <div class="show-review-author">
+                <h3><%= review.author?.username || "Guest" %></h3>
+                <span>Guest review</span>
+              </div>
+
+              <% if (isReviewAuthor) { %>
+                <span class="show-your-review">Your review</span>
+              <% } %>
+            </div>
+
+            <div
+              class="starability-result show-review-stars"
+              data-rating="<%= Number(review.rating) || 0 %>"
+              aria-label="Rating: <%= Number(review.rating) || 0 %> out of 5 stars"
+            ></div>
+
+            <p class="show-review-comment"><%= review.comment || "" %></p>
+
+            <% if (isReviewAuthor) { %>
+              <div class="show-review-actions">
+                <form
+                  method="POST"
+                  action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                  onsubmit="return confirm('Delete your review?');"
+                >
+                  <button type="submit" class="show-review-delete">
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
+                    Delete review
+                  </button>
+                </form>
+              </div>
+            <% } %>
+
+          </article>
+        <% } %>
+
+      </div>
+
+    <% } else { %>
+      <div class="show-empty-reviews">
+        <div class="show-empty-icon" aria-hidden="true">
+          <i class="fa-regular fa-star"></i>
+        </div>
+
+        <h3>No reviews yet</h3>
+        <p>Be the first to share your experience with this stay.</p>
+      </div>
+    <% } %>
+
+  </section>
+
+</main>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Price breakdown toggle
+    const taxSwitch = document.getElementById("showTaxSwitch");
+    const taxInfo = document.getElementById("showTaxInfo");
+
+    if (taxSwitch && taxInfo) {
+      const updateTaxInfo = () => {
+        taxInfo.hidden = !taxSwitch.checked;
+        taxSwitch.setAttribute("aria-expanded", String(taxSwitch.checked));
+      };
+
+      taxSwitch.addEventListener("change", updateTaxInfo);
+      updateTaxInfo();
+    }
+
+    // Booking unavailable alert
+    const bookBtn = document.getElementById("showBookBtn");
+    const bookAlert = document.getElementById("showBookAlert");
+    const closeBookAlert = document.getElementById("closeBookAlert");
+
+    if (bookBtn && bookAlert) {
+      bookBtn.addEventListener("click", () => {
+        const willOpen = bookAlert.hidden;
+
+        bookAlert.hidden = !willOpen;
+        bookBtn.setAttribute("aria-expanded", String(willOpen));
+
+        if (willOpen) {
+          bookAlert.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "auto"
+              : "smooth",
+            block: "nearest"
+          });
+        }
+      });
+    }
+
+    if (closeBookAlert && bookAlert && bookBtn) {
+      closeBookAlert.addEventListener("click", () => {
+        bookAlert.hidden = true;
+        bookBtn.setAttribute("aria-expanded", "false");
+        bookBtn.focus();
+      });
+    }
+
+    // Review form validation
+    document.querySelectorAll(".show-review-form").forEach((form) => {
+      const comment = form.querySelector('[name="review[comment]"]');
+      const ratingInputs = form.querySelectorAll(
+        'input[name="review[rating]"]'
+      );
+
+      const ratingError = form.querySelector(
+        ".show-form-group .invalid-feedback"
+      );
+
+      const updateCommentValidity = () => {
+        if (!comment) return;
+
+        const length = comment.value.trim().length;
+
+        comment.setCustomValidity(
+          length >= 3 ? "" : "Please enter at least 3 characters."
+        );
+      };
+
+      form.addEventListener("submit", (event) => {
+        const selectedRating = form.querySelector(
+          'input[name="review[rating]"]:checked'
+        );
+
+        const ratingValid = Boolean(
+          selectedRating && selectedRating.value !== ""
+        );
+
+        updateCommentValidity();
+
+        if (!ratingValid || !form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          if (ratingError) {
+            ratingError.textContent = "Please select a rating.";
+          }
+
+          if (!ratingValid) {
+            const fieldset = form.querySelector(".starability-slot");
+            if (fieldset) {
+              fieldset.setAttribute("aria-invalid", "true");
+            }
+          }
+        } else {
+          const fieldset = form.querySelector(".starability-slot");
+          if (fieldset) {
+            fieldset.removeAttribute("aria-invalid");
+          }
+        }
+
+        form.classList.add("was-validated");
+      });
+
+      if (comment) {
+        comment.addEventListener("input", () => {
+          updateCommentValidity();
+        });
+      }
+
+      ratingInputs.forEach((input) => {
+        input.addEventListener("change", () => {
+          const fieldset = form.querySelector(".starability-slot");
+          if (fieldset) {
+            fieldset.removeAttribute("aria-invalid");
+          }
+        });
+      });
+    });
+  })();
+</script>

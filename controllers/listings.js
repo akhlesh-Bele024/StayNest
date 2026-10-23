@@ -84,14 +84,7 @@ module.exports.createListing = async (req, res, next) => {
     res.render("listings/edit.ejs", { listing,originalImageUrl });
   }
  module.exports.updateListing=async(req, res) => {
-  // if req.fiil remove catyh
-//     if (req.file) {
-//   listing.image = {
-//     url: req.file.path,
-//     filename: req.file.filename
-//   };
-//   await listing.save();
-// }
+ 
 
   
    

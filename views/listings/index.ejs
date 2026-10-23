@@ -1,142 +1,638 @@
-<%- layout("/layouts/boilerplate")%> <%= success %>
-    
-   <form method="GET" action="/listings/new">
-      <button>Create New Listings</button>
-    </form>
-    <Style>
-    #filters{
-      display: flex;
-      flex-wrap:wrap;
-      align-items: center;
-     
-      
-    }
-    .filter{
-      text-align: center;
-      margin-right: 1rem;
-      margin-top: 1rem;
-      opacity: 0.7;
-    } 
-    .filter:hover{
-      opacity: 1;
-      cursor: pointer;
-    } 
-    .filter p{
-      font-size: 0.8rem;
-    }
-    .tax-info{
-      display: none;
-    }
-    .tax-toggle{
-      border: 1px solid black;
-border-radius: 1rem;
-      height: 3.25rem;
-      padding: 1rem;
-      margin-left: 5rem;
-      display: flex;
-      align-items: center;
-    }
-    </Style>
-    <div id="filters">
-      <div class="filter">
-        <div><i class="fa-solid fa-fire"></i></div>
-      <p>Tranding</p>
-      
+
+<%- layout("/layouts/boilerplate") %>
+<style>
+/* ==========================================
+   StayNest Responsive Listings
+   Mobile | Tablet | Laptop | Desktop
+   ========================================== */
+
+.staynest-listings,
+.staynest-listings * {
+  box-sizing: border-box;
+}
+
+.staynest-listings {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px clamp(14px, 2.5vw, 36px) 36px;
+}
+
+/* ================= FILTERS ================= */
+
+#filters {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.5vw, 24px);
+  width: 100%;
+  margin: 0 0 28px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  background: linear-gradient(135deg, #0b1f35, #10364a);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #38c9e8 #10283d;
+}
+
+#filters .filter {
+  flex: 0 0 auto;
+  min-width: 64px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  margin: 0;
+  padding: 8px 4px;
+
+  color: #b8c9d8;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+#filters .filter-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+#filters .filter-icon i {
+  color: #38c9e8;
+  font-size: 18px;
+}
+
+#filters .filter p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+#filters .filter:hover,
+#filters .filter.active {
+  color: #fff;
+  border-bottom-color: #38c9e8;
+}
+
+#filters .filter:hover .filter-icon,
+#filters .filter.active .filter-icon {
+  background: rgba(56, 201, 232, 0.16);
+  transform: translateY(-2px);
+}
+
+#filters .filter:focus-visible {
+  outline: 2px solid #38c9e8;
+  outline-offset: 3px;
+}
+
+/* ================= TAX TOGGLE ================= */
+
+#filters .tax-toggle {
+  flex: 0 0 auto;
+  margin-left: auto;
+  padding: 11px 14px;
+
+  color: #eaf6ff;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+}
+
+#filters .tax-toggle .form-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#filters .tax-toggle .form-check-input {
+  float: none;
+  flex: 0 0 auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+#filters .tax-toggle .form-check-input:checked {
+  background-color: #16b8d8;
+  border-color: #16b8d8;
+}
+
+#filters .tax-toggle .form-check-label {
+  color: #eaf6ff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* ================= LISTING GRID ================= */
+
+#listingsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#listingsGrid .listing-col {
+  min-width: 0;
+  padding: 0;
+}
+
+#listingsGrid .listing-link {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  color: inherit;
+  text-decoration: none;
+}
+
+#listingsGrid .listing-card {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #10283d, #0b1d30);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+#listingsGrid .listing-link:hover .listing-card {
+  transform: translateY(-4px);
+  border-color: rgba(56, 201, 232, 0.55);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+}
+
+#listingsGrid .listing-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #17354c;
+}
+
+#listingsGrid .listing-card .card-body {
+  flex: 1 1 auto;
+  padding: clamp(12px, 1.4vw, 18px);
+}
+
+#listingsGrid .listing-card .card-text {
+  margin: 0;
+  color: #c6d5e2;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+#listingsGrid .listing-title {
+  display: block;
+  margin-bottom: 6px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+#listingsGrid .price-label {
+  color: #50d6f0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+#listingsGrid .listing-tax-info {
+  color: #c6d5e2;
+}
+
+#listingsGrid .listing-tax-info small {
+  color: #9fb6c9;
+}
+
+#listingsGrid .listing-total {
+  color: #67e8c4;
+}
+
+#listingsGrid .listing-tax-info[hidden] {
+  display: none !important;
+}
+
+#listingsGrid .empty-listings {
+  grid-column: 1 / -1;
+  padding: 40px 20px;
+  color: #c6d5e2;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+/* ================= LARGE DESKTOP ================= */
+/* 1200px and above: 3 cards */
+
+@media (min-width: 1200px) {
+  #listingsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #listingsGrid .listing-img {
+    aspect-ratio: 5 / 3;
+  }
+}
+
+/* ================= LAPTOP ================= */
+/* Smaller laptops: 2 cards if columns would be too narrow */
+
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .staynest-listings {
+    padding: 18px 20px 30px;
+  }
+
+  #filters {
+    gap: 16px;
+    padding: 14px;
+  }
+
+  #listingsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+/* ================= TABLET ================= */
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .staynest-listings {
+    padding: 14px 16px 26px;
+  }
+
+  #filters {
+    gap: 14px;
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+
+  #filters .tax-toggle {
+    margin-left: 0;
+  }
+
+  #listingsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  #listingsGrid .listing-card .card-body {
+    padding: 13px;
+  }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 575.98px) {
+  .staynest-listings {
+    padding: 10px 12px 24px;
+  }
+
+  #filters {
+    gap: 12px;
+    padding: 11px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+  }
+
+  #filters .filter {
+    min-width: 56px;
+    gap: 7px;
+    padding: 7px 3px;
+  }
+
+  #filters .filter-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  #filters .filter-icon i {
+    font-size: 16px;
+  }
+
+  #filters .filter p {
+    font-size: 10px;
+  }
+
+  #filters .tax-toggle {
+    margin-left: 0;
+    padding: 9px 10px;
+  }
+
+  #filters .tax-toggle .form-check-label {
+    font-size: 11px;
+  }
+
+  #listingsGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  #listingsGrid .listing-img {
+    aspect-ratio: 4 / 3;
+  }
+
+  #listingsGrid .listing-card .card-body {
+    padding: 14px;
+  }
+}
+
+/* ================= VERY SMALL MOBILE ================= */
+
+@media (max-width: 360px) {
+  .staynest-listings {
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  #filters {
+    gap: 10px;
+    padding: 9px;
+  }
+
+  #listingsGrid {
+    gap: 14px;
+  }
+
+  #listingsGrid .listing-card .card-body {
+    padding: 12px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #filters .filter,
+  #filters .filter-icon,
+  #listingsGrid .listing-card {
+    transition: none;
+  }
+}
+</style>
+
+<div class="staynest-listings">
+
+  <!-- Listing category filters -->
+  <div id="filters" aria-label="Listing categories">
+
+    <div class="filter active" role="button" tabindex="0"
+         aria-pressed="true" data-category="Trending">
+      <div class="filter-icon"><i class="fa-solid fa-fire"></i></div>
+      <p>Trending</p>
     </div>
-    <div class="filter">
-      
-        <div><i class="fa-solid fa-bed"></i></div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Rooms">
+      <div class="filter-icon"><i class="fa-solid fa-bed"></i></div>
       <p>Rooms</p>
-      
     </div>
-    <div class="filter">
-      <div><i class="fa-solid fa-mountain-city"></i></div>
-    <p>iconic City</p>
-    
-  </div>
-  <div class="filter">
-    <div><i class="fa-solid fa-mountain"></i></div>
-  <p>Mountains</p>
-  
-</div>
-<div class="filter">
-  <div><i class="fa-brands fa-fort-awesome"></i></div>
-<p>Casties</p>
 
-</div>
-<div class="filter">
-  <div><i class="fa-solid fa-person-swimming"></i></div>
-<p>Amazing Pool</p>
-
-</div>
-<div class="filter">
-  <div><i class="fa-solid fa-campground"></i></div>
-<p>Camping</p>
-
-</div>
-<div class="filter">
-  <div><i class="fa-solid fa-cow"></i></div>
-<p>Farms</p>
-
-</div>
-<div class="filter">
-  <div><i class="fa-solid fa-snowflake"></i></div>
-<p>Artic</p>
-
-</div>
-<div class="filter">
-  <div><i class="fa-solid fa-mountain"></i></div>
-<p>Aciant</p>
-
-</div>
-<div class="filter">
-  <div><i class="fa-solid fa-mountain"></i></div>
-<p>Aciant</p>
-
-</div>
-<div class="filter">
-  <div><i class="fa-solid fa-igloo"></i></div>
-<p>Domes</p>
-
-</div>
-<div class="tax-toggle">
-  <div class="form-check-reverse form-switch">
-    <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault"/>
-    <label class="form-check-label" for="switchCheckDefault">Display total after taxes</label>
-  </div>
-</div>
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Iconic Cities">
+      <div class="filter-icon"><i class="fa-solid fa-mountain-city"></i></div>
+      <p>Iconic Cities</p>
     </div>
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-2">
-    <% for(let listing of allListings) { %>
-      <a href="/listings/<%= listing._id%>"class="listing-link">
-    <div class="card col listing-card" style="width: 20rem">
-      <img src="<%=listing.image.url%>" class="card-img-top" alt="listing_image" style="height:20rem">
-      <div class="card-img-overlay">abc</div>
-      <div class="card-body">
-        <p class="card-text">
-         <b><%=listing.title%></b><br/>
-        &#8377; <%= listing.price.toLocaleString("en-IN") %>/night
-        <i class="tax-info">&nbsp;+18% GST</i>
-        </p>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Mountains">
+      <div class="filter-icon"><i class="fa-solid fa-mountain"></i></div>
+      <p>Mountains</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Castles">
+      <div class="filter-icon"><i class="fa-brands fa-fort-awesome"></i></div>
+      <p>Castles</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Amazing Pools">
+      <div class="filter-icon"><i class="fa-solid fa-person-swimming"></i></div>
+      <p>Amazing Pools</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Camping">
+      <div class="filter-icon"><i class="fa-solid fa-campground"></i></div>
+      <p>Camping</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Farms">
+      <div class="filter-icon"><i class="fa-solid fa-cow"></i></div>
+      <p>Farms</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Arctic">
+      <div class="filter-icon"><i class="fa-solid fa-snowflake"></i></div>
+      <p>Arctic</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Domes">
+      <div class="filter-icon"><i class="fa-solid fa-igloo"></i></div>
+      <p>Domes</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Countryside">
+      <div class="filter-icon"><i class="fa-solid fa-tree-city"></i></div>
+      <p>Countryside</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Beachfront">
+      <div class="filter-icon"><i class="fa-solid fa-umbrella-beach"></i></div>
+      <p>Beachfront</p>
+    </div>
+
+    <div class="filter" role="button" tabindex="0"
+         aria-pressed="false" data-category="Luxury">
+      <div class="filter-icon"><i class="fa-solid fa-gem"></i></div>
+      <p>Luxury</p>
+    </div>
+
+    <div class="tax-toggle">
+      <div class="form-check form-switch">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="listingTaxSwitch"
+          aria-controls="listingsGrid"
+        >
+        <label class="form-check-label" for="listingTaxSwitch">
+          Display total after taxes
+        </label>
       </div>
-    </div></a>
-    <%}%>
     </div>
+  </div>
 
-  <script>
-      let taxSwitch=document.getElementById("switchCheckDefault");
-      taxSwitch.addEventListener("click",()=>{
-        console.log("clicked")
-      
-      let taxInfo=document.getElementsByClassName("tax-info");
-      for(info of taxInfo){
-        if(info.style.display!="inline"){
-          info.style.display="inline" ;   
-            }else{
-              info.style.display="none";
-            }
-          }
-      })
-      
+  <!-- Listings grid -->
+  <div id="listingsGrid">
 
-    </script>
+    <% if (allListings && allListings.length > 0) { %>
+
+      <% for (const listing of allListings) {
+        const price = Math.max(0, Number(listing.price) || 0);
+        const gst = price * 0.18;
+        const total = price + gst;
+        const imageUrl = listing.image && listing.image.url
+          ? listing.image.url
+          : "https://placehold.co/600x400?text=StayNest";
+      %>
+
+        <div class="listing-col">
+          <a
+            href="/listings/<%= listing._id %>"
+            class="listing-link"
+            aria-label="View <%= listing.title %>"
+          >
+            <div class="card listing-card">
+
+              <img
+                src="<%= imageUrl %>"
+                class="card-img-top listing-img"
+                alt="<%= listing.title %>"
+                loading="lazy"
+              >
+
+              <div class="card-body">
+                <p class="card-text">
+                  <strong class="listing-title">
+                    <%= listing.title %>
+                  </strong>
+
+                  <span class="price-label">
+                    ₹<%= price.toLocaleString("en-IN") %>
+                  </span>/night
+
+                  <span class="listing-tax-info" hidden>
+                    <br>
+
+                    <small>
+                      GST (18%): ₹<%= gst.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      }) %>
+                    </small>
+
+                    <br>
+
+                    <strong class="listing-total">
+                      Total: ₹<%= total.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                      }) %>/night
+                    </strong>
+                  </span>
+                </p>
+              </div>
+
+            </div>
+          </a>
+        </div>
+
+      <% } %>
+
+    <% } else { %>
+
+      <div class="empty-listings">
+        <h3>No listings found</h3>
+        <p>Please check back later for available stays.</p>
+      </div>
+
+    <% } %>
+
+  </div>
+</div>
+
+<script>
+  (() => {
+    const taxSwitch = document.getElementById("listingTaxSwitch");
+    const taxInfo = document.querySelectorAll(
+      "#listingsGrid .listing-tax-info"
+    );
+    const filters = document.querySelectorAll("#filters .filter");
+
+    // GST toggle
+    function updateTaxInfo() {
+      if (!taxSwitch) return;
+
+      taxInfo.forEach((info) => {
+        info.hidden = !taxSwitch.checked;
+      });
+    }
+
+    if (taxSwitch) {
+      taxSwitch.addEventListener("change", updateTaxInfo);
+      updateTaxInfo();
+    }
+
+    // Category active state
+    // This changes appearance only; actual category filtering
+    // needs a category field in the listing schema.
+    function activateFilter(selectedFilter) {
+      filters.forEach((filter) => {
+        const active = filter === selectedFilter;
+
+        filter.classList.toggle("active", active);
+        filter.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    filters.forEach((filter) => {
+      filter.addEventListener("click", () => {
+        activateFilter(filter);
+      });
+
+      filter.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          activateFilter(filter);
+        }
+      });
+    });
+  })();
+</script>

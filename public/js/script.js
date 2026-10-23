@@ -17,3 +17,18 @@
     }, false)
   })
 })()
+
+// Automatically hide flash messages after 3 seconds
+document.addEventListener("DOMContentLoaded", () => {
+  const flashMessages = document.querySelectorAll(".flash-message");
+
+  flashMessages.forEach((message) => {
+    setTimeout(() => {
+      message.classList.remove("show");
+
+      setTimeout(() => {
+        message.remove();
+      }, 500);
+    }, 3000);
+  });
+});

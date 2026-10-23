@@ -1,68 +1,455 @@
 <style>
-  .search-btn{
-    background-color:#fe424d ;
-    color:#fff ;
-    border-radius:25px;
-    padding:0 1rem 0 1rem ;
-  }.search-btn:hover{
-    background-color:#fe424d ;
-    color:#fff ;
+/* ==========================================
+   STAYNEST NAVBAR — RESPONSIVE & COMPACT
+========================================== */
+
+.navbar {
+  position: relative;
+  z-index: 1030;
+  width: 100%;
+  padding: 10px 16px;
+  background: #fff !important;
+  border-bottom: 1px solid #ececf2;
+  box-shadow: 0 3px 14px rgba(31, 41, 55, 0.06);
+}
+
+.navbar .container-fluid {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Brand */
+
+.navbar .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 12px;
+  padding: 5px 8px;
+  color: #fe424d;
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: color .2s ease;
+}
+
+.navbar .navbar-brand:hover {
+  color: #dc303b;
+}
+
+/* Hamburger */
+
+.navbar .navbar-toggler {
+  flex-shrink: 0;
+  padding: 6px 9px;
+  border: 1px solid #e4e6ef;
+  border-radius: 9px;
+  box-shadow: none;
+}
+
+.navbar .navbar-toggler:focus {
+  box-shadow: 0 0 0 3px rgba(254, 66, 77, .13);
+}
+
+/* Expanded navigation layout */
+
+.navbar .navbar-collapse {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.navbar .navbar-collapse.show,
+.navbar .navbar-collapse.collapsing {
+  min-width: 0;
+}
+
+.navbar .navbar-collapse:not(.show):not(.collapsing) {
+  min-width: 0;
+}
+
+.navbar .navbar-nav {
+  align-items: center;
+  min-width: 0;
+}
+
+.navbar .navbar-nav .nav-link {
+  padding: 9px 11px;
+  color: #374151;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  transition: color .2s ease, background .2s ease;
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link:focus-visible {
+  color: #e63847;
+  background: #fff0f1;
+}
+
+/* Search group */
+
+.navbar form.d-flex {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: clamp(220px, 28vw, 350px);
+  min-width: 0;
+  margin: 0;
+}
+
+.navbar .search-inpu {
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  height: 39px;
+  padding: 8px 13px;
+  color: #273047;
+  background: #f8f9fc;
+  border: 1px solid #e0e3ec;
+  border-radius: 10px;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.navbar .search-inpu:focus {
+  background: #fff;
+  border-color: #fe424d;
+  box-shadow: 0 0 0 3px rgba(254, 66, 77, .10);
+}
+
+.navbar .search-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-shrink: 0;
+  min-height: 39px;
+  padding: 8px 13px;
+  color: #fff;
+  background: #fe424d;
+  border: 1px solid #fe424d;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.navbar .search-btn:hover {
+  color: #fff;
+  background: #e63742;
+  border-color: #e63742;
+}
+
+.navbar .search-btn i {
+  margin: 0;
+}
+
+/* Account and listing actions */
+
+.navbar .navbar-nav.ms-auto {
+  margin-left: auto !important;
+}
+
+.navbar .navbar-nav.ms-auto:last-child {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 5px;
+}
+
+.navbar .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 37px;
+  padding: 7px 10px !important;
+  margin: 0 !important;
+  border-radius: 9px !important;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  transition: background .2s ease, color .2s ease;
+}
+
+.navbar .btn:hover {
+  transform: none;
+}
+
+/* Tablet and compact desktop:
+   collapse before the content becomes crowded */
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .navbar {
+    padding: 9px 12px;
   }
-  .search-btn i{
-    display: inline;
-    margin-left: 0.5rem;
+
+  .navbar .container-fluid {
+    gap: 6px;
   }
-  .search-inpu{
-    border-radius: 25px;
-    padding: 0.5rem 3rem 0.5rem 3rem;
+
+  .navbar .navbar-brand {
+    margin-right: 3px;
+    font-size: 1.45rem;
   }
+
+  .navbar .navbar-nav .nav-link {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .navbar form.d-flex {
+    width: clamp(190px, 24vw, 260px);
+  }
+
+  .navbar .search-btn {
+    padding: 8px 9px;
+  }
+
+  .navbar .btn {
+    padding: 7px 8px !important;
+    font-size: 10px;
+  }
+
+  .navbar .navbar-nav.ms-auto:last-child {
+    gap: 4px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 767.98px) {
+  .navbar {
+    padding: 9px 12px;
+  }
+
+  .navbar .container-fluid {
+    gap: 4px;
+  }
+
+  .navbar .navbar-brand {
+    margin-right: auto;
+    padding: 5px 4px;
+    font-size: 1.55rem;
+  }
+
+  .navbar .navbar-collapse {
+    flex-basis: 100%;
+    width: 100%;
+    padding-top: 10px;
+  }
+
+  .navbar .navbar-nav {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .navbar .navbar-nav .nav-link {
+    padding: 10px 11px;
+    font-size: 13px;
+  }
+
+  .navbar form.d-flex {
+    width: 100%;
+    gap: 7px;
+    margin: 8px 0 12px;
+  }
+
+  .navbar .search-inpu {
+    height: 42px;
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .navbar .search-btn {
+    min-height: 42px;
+    padding: 9px 13px;
+    font-size: 12px;
+  }
+
+  .navbar .navbar-nav.ms-auto {
+    margin-left: 0 !important;
+  }
+
+  .navbar .navbar-nav.ms-auto:last-child {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding-top: 6px;
+  }
+
+  .navbar .navbar-nav.ms-auto:last-child .btn {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    padding: 9px 7px !important;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+  }
+}
+
+/* Small phones */
+
+@media (max-width: 380px) {
+  .navbar {
+    padding: 8px 9px;
+  }
+
+  .navbar .navbar-brand {
+    font-size: 1.4rem;
+  }
+
+  .navbar form.d-flex {
+    gap: 5px;
+  }
+
+  .navbar .search-inpu {
+    padding: 8px 9px;
+    font-size: 11px;
+  }
+
+  .navbar .search-btn {
+    gap: 5px;
+    padding: 8px 9px;
+    font-size: 11px;
+  }
+
+  .navbar .navbar-nav.ms-auto:last-child {
+    gap: 6px;
+  }
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar *,
+  .navbar *::before,
+  .navbar *::after {
+    transition: none !important;
+  }
+}
 </style>
 
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
-   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" >
+
+    <a class="navbar-brand" href="/listings" aria-label="StayNest Home">
+      <i class="fa-regular fa-compass"></i>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
-     </button>
-     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
       <div class="navbar-nav">
-       
         <a class="nav-link" href="/listings">Explore All</a>
-        
-        
-       </div>
-       <div class="navbar-nav ms-auto">
-        <!-- lkj -->
-        <form class="d-flex" action="/search" method="GET">
-  <input
-    class="form-control me-2 search-inpu"
-    type="search"
-    name="q"
-    placeholder="Search destinations"
-    required
-  >
-  <button class="btn search-btn" type="submit">
-    <i class="fa-solid fa-magnifying-glass"></i> Search
-  </button>
-</form>
-
-
-        
-      
       </div>
+
+    
+    
+<div class="navbar-nav ms-auto">
+  <form
+    class="d-flex"
+    action="/search"
+    method="GET"
+    id="searchForm"
+  >
+    <input
+      class="form-control me-2 search-inpu"
+      type="search"
+      name="q"
+      id="searchInput"
+      placeholder="Search destinations"
+      aria-label="Search destinations"
+      autocomplete="off"
+      minlength="2"
+      required
+    >
+
+    <button class="btn search-btn" type="submit">
+      Search <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+  </form>
+</div>
+
+
       <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">Add Your Home</a>
-        <% if(!currUser){%>
-        <a class="nav-link" href="/signup"><b>Sign up</b>
+
+        <a
+          class="btn btn-outline-primary rounded-3 px-3 py-2 mx-1 my-1"
+          href="/listings/new"
+        >
+          Add Your Home
         </a>
-        <a class="nav-link" href="/login"><b>login</b></a>
-        <%}%>
-        <% if(currUser){%>
-        <a class="nav-link" href="/logout">
-          <b>Log out</b>
-        </a> 
-        <%}%>
+
+        <% if (!currUser) { %>
+          <a
+            class="btn btn-outline-success rounded-3 px-3 py-2 mx-1 my-1"
+            href="/signup"
+          >
+            <b>Sign up</b>
+          </a>
+
+          <a
+            class="btn btn-outline-danger rounded-3 px-3 py-2 mx-1 my-1"
+            href="/login"
+          >
+            <b>Login</b>
+          </a>
+        <% } %>
+
+        <% if (currUser) { %>
+          <a
+            href="/logout"
+            class="btn btn-outline-danger rounded-3 px-3 py-2 mx-1 my-1"
+          >
+            <b>Log out</b>
+          </a>
+        <% } %>
+
       </div>
     </div>
   </div>
+
+
+  
+  <script> document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    const searchForm = document.getElementById("searchForm");
+
+    if (!searchInput || !searchForm) return;
+
+    let debounceTimer;
+
+    searchInput.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+
+      const query = searchInput.value.trim();
+
+      // Empty ya one-character query par auto-search nahi
+      if (query.length < 2) return;
+
+      debounceTimer = setTimeout(() => {
+        // Search sirf tab karo jab user typing rok de
+        searchForm.requestSubmit();
+      }, 4000);
+    });
+  });</script>
 </nav>

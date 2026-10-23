@@ -1,24 +1,402 @@
+
 <%- layout("/layouts/boilerplate") %>
 
-<h4>Search results for "<%= q %>"</h4>
+<style>
+/* ===============================
+   SEARCH RESULTS - STAYNEST
+================================ */
+.search-results-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 20px 20px 0;
+}
 
-<div class="row">
-  <% if(listings.length === 0){ %>
-    <p>No results found</p>
-  <% } %>
+/* Results count */
+.search-results-count {
+  color: #64748b;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
 
-  <% listings.forEach(listing => { %>
-    <div class="col-md-4">
-      <div class="card mb-3">
-        <img src="<%= listing.image %>" class="card-img-top">
-        <div class="card-body">
-          <h5><%= listing.title %></h5>
-          <p><%= listing.location %>, <%= listing.country %></p>
-          <a href="/listings/<%= listing._id %>" class="btn btn-sm btn-primary">
-            View
-          </a>
-        </div>
+/* Responsive grid */
+.search-results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+}
+
+/* Card link */
+.search-card-link {
+  display: block;
+  min-width: 0;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Listing card */
+.search-card {
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #e8eaf0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Listing image */
+.search-card-img {
+  display: block;
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  background: #f1f5f9;
+  transition: transform 0.35s ease;
+}
+
+/* Card body */
+.search-card .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+/* Listing title */
+.search-card .card-title {
+  width: 100%;
+  margin-bottom: 10px;
+  color: #172033;
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+/* Location */
+.search-card .card-text {
+  width: 100%;
+  margin-bottom: 14px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.search-card .card-text i {
+  color: #ef4444;
+  margin-right: 4px;
+}
+
+/* Price */
+.search-price {
+  margin-top: auto;
+  margin-bottom: 16px;
+  color: #e63946;
+  font-size: 1.12rem;
+  font-weight: 800;
+}
+
+.search-price .text-muted {
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+/* View details button */
+.search-card .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 8px 15px;
+  border-radius: 9px;
+  font-weight: 600;
+  white-space: normal;
+}
+
+/* No results */
+.no-results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 55vh;
+  padding: 35px 16px;
+}
+
+.no-results-content {
+  width: 100%;
+  max-width: 480px;
+  padding: 36px 28px;
+  text-align: center;
+  border: 1px solid #e8eaf0;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
+}
+
+.no-results-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: #fff0f0;
+  color: #e63946;
+  font-size: 2rem;
+}
+
+.no-results-content h3 {
+  margin-bottom: 12px;
+  color: #172033;
+  font-size: 1.65rem;
+  font-weight: 750;
+}
+
+.no-results-content p {
+  margin-bottom: 18px;
+  color: #64748b;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.no-results-content .btn {
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* ===============================
+   DESKTOP HOVER
+================================ */
+
+@media (hover: hover) and (pointer: fine) {
+  .search-card-link:hover .search-card {
+    transform: translateY(-6px);
+    border-color: #fecaca;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+  }
+
+  .search-card-link:hover .search-card-img {
+    transform: scale(1.035);
+  }
+
+  .search-card-link:hover .card-title {
+    color: #e63946;
+  }
+}
+
+/* ===============================
+   SMALL DESKTOP / TABLET
+================================ */
+
+@media (max-width: 1100px) {
+  .search-results-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .search-card-img {
+    height: 230px;
+  }
+
+  .search-results-container {
+    padding: 24px 18px;
+  }
+}
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media (max-width: 575.98px) {
+  .search-results-container {
+    padding: 18px 14px;
+  }
+
+  .search-results-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .search-results-count {
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+  }
+
+  .search-card {
+    border-radius: 15px;
+  }
+
+  .search-card-img {
+    height: 230px;
+  }
+
+  .search-card .card-body {
+    padding: 17px;
+  }
+
+  .search-card .card-title {
+    font-size: 1.05rem;
+  }
+
+  .search-card .card-text {
+    font-size: 0.88rem;
+  }
+
+  .search-price {
+    font-size: 1.08rem;
+  }
+
+  .no-results {
+    min-height: 50vh;
+    padding: 20px 0;
+  }
+
+  .no-results-content {
+    padding: 28px 18px;
+    border-radius: 18px;
+  }
+
+  .no-results-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 1.7rem;
+  }
+
+  .no-results-content h3 {
+    font-size: 1.4rem;
+  }
+
+  .no-results-content p {
+    font-size: 0.92rem;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 360px) {
+  .search-results-container {
+    padding: 14px 10px;
+  }
+
+  .search-card-img {
+    height: 195px;
+  }
+
+  .search-card .card-body {
+    padding: 14px;
+  }
+
+  .search-card .btn {
+    max-width: 100%;
+    font-size: 0.82rem;
+  }
+
+  .no-results-content {
+    padding: 24px 14px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .search-card,
+  .search-card-img {
+    transition: none;
+  }
+}
+
+@media (hover: none) {
+  .search-card-link:hover .search-card {
+    transform: none;
+  }
+
+  .search-card-link:hover .search-card-img {
+    transform: none;
+  }
+}
+</style>
+
+<div class="search-results-container">
+
+  <% if (listings.length === 0) { %>
+
+    <div class="no-results">
+      <div class="no-results-content">
+        <i class="fa-solid fa-magnifying-glass no-results-icon"></i>
+
+        <h3>No Results Found</h3>
+
+        <p>
+          Sorry, we couldn't find any listings matching
+          "<strong><%= q %></strong>".
+        </p>
+
+        <a href="/listings" class="btn btn-dark mt-2">
+          <i class="fa-solid fa-house"></i>
+          View All Listings
+        </a>
       </div>
     </div>
-  <% }) %>
+
+  <% } else { %>
+
+    <p class="search-results-count">
+      <%= listings.length %>
+      <%= listings.length === 1 ? "listing" : "listings" %> found
+    </p>
+
+    <div class="search-results-grid">
+
+      <% listings.forEach(listing => { %>
+
+        <a
+          href="/listings/<%= listing._id %>"
+          class="search-card-link"
+        >
+          <div class="card search-card">
+
+            <img
+              src="<%= listing.image.url %>"
+              class="card-img-top search-card-img"
+              alt="<%= listing.title %>"
+              loading="lazy"
+            />
+
+            <div class="card-body">
+
+              <h5 class="card-title">
+                <%= listing.title %>
+              </h5>
+
+              <p class="card-text text-muted">
+                <i class="fa-solid fa-location-dot"></i>
+                <%= listing.location %>, <%= listing.country %>
+              </p>
+
+              <p class="search-price">
+                &#8377; <%= listing.price.toLocaleString("en-IN") %>
+                <span class="text-muted">/ night</span>
+              </p>
+
+              <span class="btn btn-outline-dark btn-sm">
+                View Details
+              </span>
+
+            </div>
+          </div>
+        </a>
+
+      <% }) %>
+
+    </div>
+
+  <% } %>
+
 </div>

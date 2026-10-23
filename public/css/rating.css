@@ -109,7 +109,8 @@
 .starability-slot > label {
   position: relative;
   display: inline-block;
- float: none;/*left*/
+/* left float: none; */
+float: left;
   width: 30px;
   height: 30px;
   font-size: 0.1em;
@@ -194,4 +195,43 @@
 .starability-slot > input:focus ~ label {
   -webkit-transition: background-position .7s;
   transition: background-position .7s;
+}
+/*  */
+
+.show-card {
+  border: none !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.show-image {
+  width: 100%;
+  height: 40vh;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+
+.btns {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.review-card {
+  width: 100%;
+  min-width: 0;
+}
+
+.review-card .card-body {
+  min-width: 0;
+}
+
+.review-comment {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.review-card .card-footer {
+  background-color: white;
+  border-top: none;
 }

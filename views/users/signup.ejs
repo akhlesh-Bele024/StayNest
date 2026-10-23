@@ -1,34 +1,491 @@
-<%- layout("/layouts/boilerplate")%>
-<div class="row mt-3">
-  <h1 class="col-6 offset-3">signUp on Wonderlust</h1>
-    <div class="col-6 offset-3">
-    <form action="/signup" method="POST" class="needs-validation" novalidate>
-      <div class="mb-3">
-        <label for="username" class="form-lable">Username</label>
-        <input name="username"
-          type="text" 
-        id="username"
-        class="form-control"
-        required/>
+ <%- layout("/layouts/boilerplate") %>
+
+<style>
+/* ============================
+   STAYNEST SIGNUP PAGE
+============================ */
+
+.staynest-signup,
+.staynest-signup * {
+  box-sizing: border-box;
+}
+
+.staynest-signup {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  min-height: 82vh;
+  min-height: 82svh;
+
+  margin: 0;
+  padding: 2.5rem 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      ellipse at 15% 15%,
+      rgba(124, 58, 237, 0.30),
+      transparent 38%
+    ),
+    radial-gradient(
+      ellipse at 90% 85%,
+      rgba(254, 66, 77, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #0b1020,
+      #17152e 55%,
+      #21142c
+    );
+
+  border-radius: 18px;
+}
+
+/* Signup card */
+
+.staynest-signup .signup-card {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  max-width: 460px;
+  min-width: 0;
+
+  margin: auto;
+  padding: 2rem;
+
+  color: #ffffff;
+  background: rgba(17, 24, 45, 0.92);
+
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 22px;
+
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+/* Card hover effect */
+
+@media (hover: hover) and (pointer: fine) {
+  .staynest-signup .signup-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(167, 139, 250, 0.65);
+    box-shadow:
+      0 22px 50px rgba(0, 0, 0, 0.38),
+      0 0 24px rgba(124, 58, 237, 0.12);
+  }
+}
+
+/* Brand */
+
+.staynest-signup .signup-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+
+  margin-bottom: 1.5rem;
+
+  color: #ff7180;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.staynest-signup .signup-brand i {
+  font-size: 1.55rem;
+}
+
+/* Heading */
+
+.staynest-signup .signup-title {
+  margin: 0 0 0.6rem;
+
+  color: #ffffff;
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+
+  overflow-wrap: anywhere;
+}
+
+.staynest-signup .signup-subtitle {
+  margin: 0 0 1.8rem;
+
+  color: #b5bdd0;
+  font-size: clamp(0.875rem, 2vw, 0.95rem);
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* Form fields */
+
+.staynest-signup .signup-form .signup-field {
+  min-width: 0;
+  margin-bottom: 1.15rem;
+}
+
+.staynest-signup .signup-form .signup-label {
+  display: block;
+  margin-bottom: 0.5rem;
+
+  color: #e6eaf4;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.staynest-signup .signup-form .signup-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+
+  padding: 0.8rem 0.95rem;
+
+  color: #ffffff;
+  background: #101629;
+
+  border: 1px solid #343c57;
+  border-radius: 12px;
+  outline: none;
+
+  font-family: inherit;
+  font-size: 16px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.staynest-signup .signup-form .signup-input::placeholder {
+  color: #8992aa;
+  opacity: 1;
+}
+
+/* Input focus */
+
+.staynest-signup .signup-form .signup-input:focus {
+  color: #ffffff;
+  background: #131a30;
+
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.15);
+}
+
+/* Autofill */
+
+.staynest-signup .signup-form .signup-input:-webkit-autofill,
+.staynest-signup .signup-form .signup-input:-webkit-autofill:hover,
+.staynest-signup .signup-form .signup-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff;
+  box-shadow: 0 0 0 1000px #101629 inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Validation feedback */
+
+.staynest-signup .signup-form .invalid-feedback {
+  color: #ff9ca5;
+}
+
+.staynest-signup .signup-form .valid-feedback {
+  color: #86efac;
+}
+
+/* Submit button */
+
+.staynest-signup .signup-form .signup-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+
+  width: 100%;
+  min-height: 51px;
+
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+
+  color: #ffffff;
+  background: linear-gradient(100deg, #fe424d, #c026d3);
+
+  border: none;
+  border-radius: 12px;
+
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 22px rgba(192, 38, 211, 0.22);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.staynest-signup .signup-form .signup-submit i {
+  transition: transform 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .staynest-signup .signup-form .signup-submit:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(254, 66, 77, 0.3);
+  }
+
+  .staynest-signup .signup-form .signup-submit:hover i {
+    transform: translateX(4px);
+  }
+}
+
+.staynest-signup .signup-form .signup-submit:active {
+  transform: scale(0.99);
+}
+
+/* Login footer inside card */
+
+.staynest-signup .signup-footer {
+  margin: 1.5rem 0 0;
+
+  color: #b5bdd0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  text-align: center;
+
+  overflow-wrap: anywhere;
+}
+
+.staynest-signup .signup-footer a {
+  color: #ff8490;
+  font-weight: 750;
+  text-decoration: none;
+
+  transition: color 0.2s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .staynest-signup .signup-footer a:hover {
+    color: #ffc0c6;
+    text-decoration: underline;
+  }
+}
+
+/* Keyboard accessibility */
+
+.staynest-signup .signup-form .signup-input:focus-visible,
+.staynest-signup .signup-form .signup-submit:focus-visible,
+.staynest-signup .signup-footer a:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 3px;
+}
+
+/* Tablet */
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .staynest-signup {
+    min-height: 78vh;
+    min-height: 78svh;
+    padding: 2rem 1.25rem;
+  }
+
+  .staynest-signup .signup-card {
+    max-width: 440px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 575.98px) {
+  .staynest-signup {
+    min-height: auto;
+    padding: 1.5rem 0.75rem;
+    border-radius: 14px;
+  }
+
+  .staynest-signup .signup-card {
+    max-width: 420px;
+    padding: 1.5rem 1rem;
+    border-radius: 18px;
+  }
+
+  .staynest-signup .signup-brand {
+    margin-bottom: 1.1rem;
+  }
+
+  .staynest-signup .signup-subtitle {
+    margin-bottom: 1.4rem;
+  }
+
+  .staynest-signup .signup-form .signup-input {
+    min-height: 48px;
+  }
+}
+
+/* Small mobile */
+
+@media (max-width: 360px) {
+  .staynest-signup {
+    padding: 1rem 0.5rem;
+  }
+
+  .staynest-signup .signup-card {
+    padding: 1.25rem 0.85rem;
+  }
+
+  .staynest-signup .signup-title {
+    font-size: 1.45rem;
+  }
+}
+
+/* Reduced motion accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  .staynest-signup *,
+  .staynest-signup *::before,
+  .staynest-signup *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Full-width signup background inside Bootstrap container */
+main.main-content:has(.staynest-signup) {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.staynest-signup {
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  min-height: calc(100vh - 76px);
+  min-height: calc(100svh - 76px);
+
+  margin-left: calc(50% - 50vw);
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+
+  border-radius: 0;
+}
+</style>
+
+<div class="staynest-signup">
+  <section
+    class="signup-card"
+    aria-labelledby="staynestSignupTitle"
+  >
+    <div class="signup-brand">
+      <i class="fa-solid fa-house-chimney" aria-hidden="true"></i>
+      <span>StayNest</span>
+    </div>
+
+    <h1 class="signup-title" id="staynestSignupTitle">
+      Sign up to StayNest
+    </h1>
+
+    <p class="signup-subtitle">
+      Create your account and find your perfect stay.
+    </p>
+
+    <form
+      action="/signup"
+      method="POST"
+      class="signup-form needs-validation"
+      novalidate
+    >
+      <div class="signup-field">
+        <label for="username" class="signup-label">
+          Username
+        </label>
+
+        <input
+          name="username"
+          type="text"
+          id="username"
+          class="signup-input"
+          placeholder="Enter your username"
+          autocomplete="username"
+          required
+        >
+
         <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">
+          Please enter a username.
         </div>
-        <div class="mb-3">
-        <label for="email" class="form-lable">Email</label>
-        <input name="email"
-          type="text" 
-        id="email"
-        class="form-control"
-        required/>
+      </div>
+
+      <div class="signup-field">
+        <label for="email" class="signup-label">
+          Email address
+        </label>
+
+        <input
+          name="email"
+          type="email"
+          id="email"
+          class="signup-input"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required
+        >
+
+        <div class="invalid-feedback">
+          Please enter a valid email address.
         </div>
-        <div class="mb-3">
-          <label for="password" class="form-lable">password</label>
-          <input name="password"
-            type="password" 
+      </div>
+
+      <div class="signup-field">
+        <label for="password" class="signup-label">
+          Password
+        </label>
+
+        <input
+          name="password"
+          type="password"
           id="password"
-          class="form-control"
-          required/>
-          </div>
-       <button class="btn btn-success">Signup</button>
+          class="signup-input"
+          placeholder="Create a password"
+          autocomplete="new-password"
+          minlength="8"
+          required
+        >
+
+        <div class="invalid-feedback">
+          Please enter a password with at least 8 characters.
+        </div>
+      </div>
+
+      <button type="submit" class="signup-submit">
+        Create account
+        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+      </button>
     </form>
-  </div>
- </div>
+
+    <p class="signup-footer">
+      Already have an account?
+      <a href="/login">Log in</a>
+    </p>
+  </section>
+</div>

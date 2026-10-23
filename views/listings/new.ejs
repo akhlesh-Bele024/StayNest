@@ -1,58 +1,223 @@
-<%- layout("/layouts/boilerplate")%>
+ <%- layout("/layouts/boilerplate") %>
 
-<div class="row mt-3">
-  <div class="col-8 offset-2">
-    <h3>Create a New Listing me s add karna hai</h3>
-    <form action="/listings"method="POST" novalidate class="needs-validation" enctype="multipart/form-data"
+<style>
+  .new-listing-page {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+  }
+
+  .listing-form-card {
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 1.25rem;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .listing-form-heading {
+    margin-bottom: 0.5rem;
+    color: #202b45;
+    font-size: clamp(1.6rem, 4vw, 2.1rem);
+    font-weight: 800;
+  }
+
+  .listing-form-subtitle {
+    margin-bottom: 1.75rem;
+    color: #64748b;
+    line-height: 1.6;
+  }
+
+  .listing-form-card .form-label {
+    margin-bottom: 0.5rem;
+    color: #334155;
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .listing-form-card .form-control {
+    min-height: 48px;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid #dbe1ea;
+    border-radius: 0.75rem;
+    background-color: #fff;
+  }
+
+  .listing-form-card textarea.form-control {
+    min-height: 135px;
+    resize: vertical;
+  }
+
+  .listing-form-card .form-control:focus {
+    border-color: #fe424d;
+    box-shadow: 0 0 0 0.2rem rgba(254, 66, 77, 0.12);
+  }
+
+  .listing-form-card input[type="file"].form-control {
+    padding: 0.55rem;
+  }
+
+  .listing-form-card input[type="file"]::file-selector-button {
+    margin-right: 0.75rem;
+    padding: 0.45rem 0.8rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: #fff0f1;
+    color: #d92f3b;
+    cursor: pointer;
+  }
+
+  .listing-submit-btn {
+    width: 100%;
+    min-height: 50px;
+    border: none;
+    border-radius: 0.8rem;
+    background: #fe424d;
+    color: #fff;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .listing-submit-btn:hover {
+    background: #df303d;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .listing-form-card:hover {
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.11);
+    }
+  }
+
+  @media (max-width: 575.98px) {
+    .new-listing-page {
+      padding: 1.25rem 0.75rem 2rem;
+    }
+
+    .listing-form-card {
+      padding: 1.2rem;
+      border-radius: 1rem;
+    }
+  }
+</style>
+
+<section class="new-listing-page">
+  <div class="listing-form-card">
+    <h1 class="listing-form-heading">Create a New Listing</h1>
+    <p class="listing-form-subtitle">
+      Share your place with travelers by adding the details below.
+    </p>
+
+    <form
+      action="/listings"
+      method="POST"
+      novalidate
+      class="needs-validation"
+      enctype="multipart/form-data"
     >
-    <!-- enctype="multipart/form-data" -->
       <div class="mb-3">
-      <label for="title" class="form-lable">Title</label>
-      <input name="listing[title]" placeholder="Add a catchy title" type="text" class="form-control"
-      required/>
-      <div class="valid-feedback">description should be valid</div>
+        <label for="title" class="form-label">Listing Title</label>
+        <input
+          id="title"
+          name="listing[title]"
+          placeholder="Add a catchy title"
+          type="text"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Please enter a listing title.</div>
       </div>
-      <div  class="mb-3">
-        <label for="description" class="form-lable">Description</label>
-      <textarea
-        name="listing[description]"
-        class="form-control"
-        required
-      ></textarea>
-      <div class="invalid-feedback">description should be valid</div>
-</div>
 
-      <div  class="mb-3">
-        <label for="image" class="form-lable">Upload Listing image </label>
-            <input name="listing[image]" type="file"  class="form-control"/>
-            </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea
+          id="description"
+          name="listing[description]"
+          class="form-control"
+          placeholder="Describe your place, amenities, and what makes it special..."
+          required
+        ></textarea>
+        <div class="invalid-feedback">Please enter a description.</div>
+      </div>
+
+      <div class="mb-3">
+        <label for="image" class="form-label">Upload Listing Image</label>
+        <input
+          id="image"
+          name="listing[image]"
+          type="file"
+          accept="image/*"
+          class="form-control"
+        />
+      </div>
+
       <div class="row">
-      <div  class="mb-3 col-md-4">
-        <label for="price" class="form-lable">price</label>
-      <input name="listing[price]" placeholder="enter price" type="Number"  class="form-control"
-      required/>
-      <div class="invalid-feedback">price should be valid</div>
+        <div class="mb-3 col-md-4">
+          <label for="price" class="form-label">Price per Night (₹)</label>
+          <input
+            id="price"
+            name="listing[price]"
+            placeholder="Enter price"
+            type="number"
+            min="0"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Please enter a valid price.</div>
+        </div>
+
+        <div class="mb-3 col-md-8">
+          <label for="country" class="form-label">Country</label>
+          <input
+            id="country"
+            name="listing[country]"
+            placeholder="Enter country"
+            type="text"
+            class="form-control"
+            required
+          />
+          <div class="invalid-feedback">Please enter a country.</div>
+        </div>
       </div>
-      <div class="mb-3 col-md-8">
-        <label for="country" class="form-lable">Country</label>
-      <input name="listing[country]" placeholder="enter country" type="text" class="form-control"
-      required />
-      <div class="invalid-feedback">country should be valid</div>
+
+      <div class="mb-4">
+        <label for="location" class="form-label">Location</label>
+        <input
+          id="location"
+          name="listing[location]"
+          placeholder="Enter city or area"
+          type="text"
+          class="form-control"
+          required
+        />
+        <div class="invalid-feedback">Please enter a location.</div>
       </div>
-      </div>
-      <div  class="mb-3">
-      <input
-        name="listing[location]"
-        placeholder="enter location"
-        type="text"
-        class="form-control"
-        required
-      />
-      <div class="invalid-feedback">location should be valid</div>
-    </div>
-      <button class="btn btn-dark add-btn mt-3">Add</button>
+
+      <button type="submit" class="btn listing-submit-btn">
+        <i class="fa-solid fa-plus me-2"></i>Create Listing
+      </button>
     </form>
   </div>
-  </div>
-  
-  
+</section>
+
+<script>
+  (() => {
+    "use strict";
+
+    const forms = document.querySelectorAll(".needs-validation");
+
+    Array.from(forms).forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        form.classList.add("was-validated");
+      });
+    });
+  })();
+</script>
